@@ -1,0 +1,36 @@
+# Dev tools & scripts
+generate.js
+submit-kling*.js
+verify-*.mjs
+debug-overflow.mjs
+
+# Logs
+*.log
+
+# Node
+node_modules/
+package.json
+package-lock.json
+
+# Secrets
+.env
+
+# Source videos (frames are what Vercel needs)
+*.mp4
+watch/
+watch.mp4
+
+# Dev/skill files
+CLAUDE.md
+SCROLL-ANIMATION-BEST-PRACTICES.md
+.claude/
+1776873187042-animated-websites-skills.zip
+
+# Test screenshots
+verify-shots/
+
+# Unused frame folder
+volta-vision/
+
+# Rejected image
+generated/eiffel-painted.png
