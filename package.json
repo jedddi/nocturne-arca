@@ -10,6 +10,7 @@
   "scripts": {
     "image": "node scripts/generate.js image",
     "video": "node scripts/generate.js video",
+    "seed": "node scripts/seed-submissions.js",
     "start": "vercel dev"
   },
   "devDependencies": {

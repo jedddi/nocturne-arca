@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NOCTURNE — Atelier Dashboard</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:        #000000;
+    --bg-elev:   #0A0A0A;
+    --bg-card:   #0D0D0F;
+    --text:      #F5F5F7;
+    --muted:     #86868B;
+    --dim:       #4A4A4E;
+    --line:      #181818;
+    --line-2:    #232325;
+    --gold:      #C9A961;
+    --gold-dim:  #6B5A35;
+    --danger:    #C96161;
+    --serif:  'Instrument Serif', 'Times New Roman', serif;
+    --sans:   'Geist', system-ui, -apple-system, sans-serif;
+    --mono:   'Geist Mono', ui-monospace, monospace;
+    --ease:   cubic-bezier(.22, .61, .36, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity: 0.03;
+    mix-blend-mode: overlay;
+    z-index: 999;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- Login gate ---------- */
+  .gate {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+    z-index: 100;
+    padding: 24px;
+  }
+  .gate[hidden] { display: none; }
+  .gate-card {
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid var(--line);
+    background: var(--bg-elev);
+    padding: 48px 40px;
+  }
+  .gate-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .gate-title {
+    font-family: var(--serif);
+    font-size: 36px;
+    line-height: 1.05;
+    margin: 0 0 28px;
+    font-weight: 400;
+  }
+  .gate-title em { font-style: italic; color: var(--gold); }
+  .gate-field { margin-bottom: 18px; }
+  .gate-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .gate-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line-2);
+    color: var(--text);
+    padding: 12px 14px;
+    font-family: var(--sans);
+    font-size: 14px;
+    outline: none;
+    transition: border-color .3s var(--ease);
+  }
+  .gate-input:focus { border-color: var(--gold); }
+  .gate-btn {
+    width: 100%;
+    background: var(--text);
+    color: var(--bg);
+    border: 0;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .3s var(--ease), color .3s var(--ease), transform .3s var(--ease);
+  }
+  .gate-btn:hover { background: var(--gold); transform: translateY(-1px); }
+  .gate-btn:disabled { opacity: .5; cursor: wait; transform: none; }
+  .gate-error {
+    margin-top: 14px;
+    color: var(--danger);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+  }
+  .gate-error[hidden] { display: none; }
+
+  /* ---------- App layout ---------- */
+  .app[hidden] { display: none; }
+  .app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  .rail {
+    border-right: 1px solid var(--line);
+    background: var(--bg-elev);
+    padding: 32px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .rail-brand {
+    font-family: var(--serif);
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .rail-brand em { font-style: italic; color: var(--gold); }
+  .rail-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .rail-nav { display: flex; flex-direction: column; gap: 2px; }
+  .rail-link {
+    display: flex; align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-left: 2px solid transparent;
+    cursor: pointer;
+    transition: color .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
+  }
+  .rail-link:hover { color: var(--text); }
+  .rail-link.active {
+    color: var(--text);
+    border-left-color: var(--gold);
+    background: rgba(201, 169, 97, 0.04);
+  }
+  .rail-foot { margin-top: auto; padding-top: 24px; border-top: 1px solid var(--line); }
+  .rail-logout {
+    background: none;
+    border: 1px solid var(--line-2);
+    color: var(--muted);
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    transition: color .25s var(--ease), border-color .25s var(--ease);
+  }
+  .rail-logout:hover { color: var(--text); border-color: var(--gold); }
+
+  /* ---------- Main ---------- */
+  .main { padding: 40px 56px 80px; max-width: 1400px; }
+  .panel[hidden] { display: none; }
+  .panel-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .panel-title {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 400;
+    margin: 0;
+    line-height: 1;
+  }
+  .panel-title em { font-style: italic; color: var(--gold); }
+  .panel-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---------- Overview stats ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .stat {
+    background: var(--bg-card);
+    padding: 28px 24px;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .stat-value {
+    font-family: var(--serif);
+    font-size: 56px;
+    line-height: 1;
+    color: var(--text);
+  }
+  .stat-value.dim { color: var(--dim); }
+  .stat-foot {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  /* ---------- Tables ---------- */
+  .table-wrap {
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    background: rgba(255,255,255,0.01);
+  }
+  tr:last-child td { border-bottom: 0; }
+  td.email { color: var(--muted); font-family: var(--mono); font-size: 12px; }
+  td.msg { color: var(--muted); max-width: 420px; }
+  td.when { color: var(--dim); font-family: var(--mono); font-size: 11px; white-space: nowrap; }
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid var(--line-2);
+    color: var(--muted);
+  }
+  .pill.gold { color: var(--gold); border-color: var(--gold-dim); }
+  .pill.live { color: var(--text); border-color: var(--text); }
+  .row-btn {
+    background: none;
+    border: 1px solid var(--line-2);
+    color: var(--muted);
+    padding: 6px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color .25s var(--ease), border-color .25s var(--ease);
+  }
+  .row-btn:hover { color: var(--danger); border-color: var(--danger); }
+  .row-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .1em;
+  }
+
+  /* ---------- Stub cards ---------- */
+  .stub {
+    border: 1px dashed var(--line-2);
+    padding: 80px 40px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .stub h3 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    margin: 0 0 12px;
+    color: var(--text);
+  }
+  .stub p { margin: 0; max-width: 480px; margin-inline: auto; }
+
+  @media (max-width: 720px) {
+    .app { grid-template-columns: 1fr; }
+    .rail { position: static; height: auto; flex-direction: row; flex-wrap: wrap; gap: 8px; padding: 16px; }
+    .rail-brand, .rail-sub { width: 100%; margin: 0; }
+    .rail-nav { flex-direction: row; flex-wrap: wrap; }
+    .rail-foot { width: 100%; }
+    .main { padding: 24px 20px 60px; }
+    .panel-title { font-size: 30px; }
+    .stat-value { font-size: 42px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN GATE ============ -->
+<div class="gate" id="gate">
+  <form class="gate-card" id="gate-form" autocomplete="off">
+    <div class="gate-eyebrow">Maison Nocturne · Atelier</div>
+    <h1 class="gate-title">Dashboard <em>access.</em></h1>
+    <div class="gate-field">
+      <label class="gate-label" for="gate-pw">Password</label>
+      <input class="gate-input" id="gate-pw" type="password" autocomplete="current-password" required />
+    </div>
+    <button class="gate-btn" id="gate-btn" type="submit">Access Dashboard →</button>
+    <div class="gate-error" id="gate-error" hidden></div>
+  </form>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app" hidden>
+  <aside class="rail">
+    <div class="rail-brand">No<em>cturne</em></div>
+    <div class="rail-sub">Atelier · MMXXVI</div>
+    <nav class="rail-nav" id="rail-nav">
+      <a class="rail-link active" data-target="overview">Overview</a>
+      <a class="rail-link" data-target="submissions">Form Submissions</a>
+      <a class="rail-link" data-target="subscribers">Subscribers</a>
+      <a class="rail-link" data-target="email-log">Email Log</a>
+      <a class="rail-link" data-target="new-newsletter">New Newsletter</a>
+      <a class="rail-link" data-target="saved-newsletters">Saved Newsletters</a>
+    </nav>
+    <div class="rail-foot">
+      <button class="rail-logout" id="logout-btn">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Overview -->
+    <section class="panel" id="panel-overview">
+      <div class="panel-head">
+        <h2 class="panel-title">Over<em>view.</em></h2>
+        <span class="panel-meta" id="overview-meta">Loading…</span>
+      </div>
+      <div class="stats" id="stats">
+        <div class="stat"><div class="stat-label">Form fills</div><div class="stat-value" id="stat-fills">—</div></div>
+        <div class="stat"><div class="stat-label">Subscribers</div><div class="stat-value" id="stat-subs">—</div></div>
+        <div class="stat"><div class="stat-label">Emails sent</div><div class="stat-value" id="stat-emails">—</div><div class="stat-foot">confirmations + follow-ups</div></div>
+        <div class="stat"><div class="stat-label">Unsubscribes</div><div class="stat-value dim" id="stat-unsubs" title="No unsubscribed_at column on form_submissions yet">—</div><div class="stat-foot">column not tracked</div></div>
+      </div>
+    </section>
+
+    <!-- Submissions -->
+    <section class="panel" id="panel-submissions" hidden>
+      <div class="panel-head">
+        <h2 class="panel-title">Form <em>submissions.</em></h2>
+        <span class="panel-meta" id="submissions-meta">—</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Message</th><th>Replied</th><th>Opt-in</th><th>Received</th></tr>
+          </thead>
+          <tbody id="submissions-body"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Subscribers -->
+    <section class="panel" id="panel-subscribers" hidden>
+      <div class="panel-head">
+        <h2 class="panel-title">Sub<em>scribers.</em></h2>
+        <span class="panel-meta" id="subscribers-meta">—</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Opted in</th><th></th></tr>
+          </thead>
+          <tbody id="subscribers-body"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Email log -->
+    <section class="panel" id="panel-email-log" hidden>
+      <div class="panel-head">
+        <h2 class="panel-title">Email <em>log.</em></h2>
+        <span class="panel-meta" id="email-log-meta">—</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>When</th><th>Type</th><th>Recipient</th><th>Submission</th></tr>
+          </thead>
+          <tbody id="email-log-body"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Stubs -->
+    <section class="panel" id="panel-new-newsletter" hidden>
+      <div class="panel-head">
+        <h2 class="panel-title">New <em>newsletter.</em></h2>
+        <span class="panel-meta">Stub</span>
+      </div>
+      <div class="stub">
+        <h3>Coming soon.</h3>
+        <p>Drafting flow lands once a <code>newsletters</code> table is introduced. For now the maison sends transmissions by hand.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-saved-newsletters" hidden>
+      <div class="panel-head">
+        <h2 class="panel-title">Saved <em>newsletters.</em></h2>
+        <span class="panel-meta">Stub</span>
+      </div>
+      <div class="stub">
+        <h3>Coming soon.</h3>
+        <p>No drafts table exists yet. Pair this section with the drafting flow above when it ships.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- Login ----------
+  const gate = $('gate');
+  const gateForm = $('gate-form');
+  const gateBtn = $('gate-btn');
+  const gatePw = $('gate-pw');
+  const gateErr = $('gate-error');
+  const app = $('app');
+
+  async function tryLogin(password) {
+    const res = await fetch('/api/dashboard/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ password }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Login failed');
+    return true;
+  }
+
+  gateForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    gateBtn.disabled = true;
+    gateErr.hidden = true;
+    gateErr.textContent = '';
+    try {
+      await tryLogin(gatePw.value);
+      gate.hidden = true;
+      app.hidden = false;
+      activate('overview');
+    } catch (err) {
+      gateErr.textContent = err.message || 'Login failed';
+      gateErr.hidden = false;
+    } finally {
+      gateBtn.disabled = false;
+    }
+  });
+
+  // Try a silent probe — if a valid cookie already exists, skip the gate.
+  (async () => {
+    try {
+      const res = await fetch('/api/dashboard/overview', { credentials: 'same-origin' });
+      if (res.ok) {
+        gate.hidden = true;
+        app.hidden = false;
+        activate('overview');
+      }
+    } catch {}
+  })();
+
+  $('logout-btn').addEventListener('click', async () => {
+    try {
+      await fetch('/api/dashboard/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ action: 'logout' }),
+      });
+    } catch {}
+    location.reload();
+  });
+
+  // ---------- Routing ----------
+  const loaded = new Set();
+  const links = document.querySelectorAll('.rail-link');
+  links.forEach(link => {
+    link.addEventListener('click', () => activate(link.dataset.target));
+  });
+
+  function activate(name) {
+    links.forEach(l => l.classList.toggle('active', l.dataset.target === name));
+    document.querySelectorAll('.panel').forEach(p => p.hidden = (p.id !== `panel-${name}`));
+    if (!loaded.has(name)) {
+      loaded.add(name);
+      const loader = LOADERS[name];
+      if (loader) loader();
+    }
+  }
+
+  // ---------- Helpers ----------
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleString(undefined, { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+  }
+  function truncate(s, n) {
+    s = String(s ?? '');
+    return s.length > n ? s.slice(0, n - 1) + '…' : s;
+  }
+  async function getJSON(url) {
+    const res = await fetch(url, { credentials: 'same-origin' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    return data;
+  }
+
+  // ---------- Loaders ----------
+  const LOADERS = {
+    overview: async () => {
+      try {
+        const { stats } = await getJSON('/api/dashboard/overview');
+        $('stat-fills').textContent = stats.form_fills;
+        $('stat-subs').textContent = stats.subscribers;
+        $('stat-emails').textContent = stats.emails_sent;
+        $('overview-meta').textContent = `${stats.form_fills} submissions on record`;
+      } catch (err) {
+        $('overview-meta').textContent = err.message;
+      }
+    },
+    submissions: async () => {
+      const body = $('submissions-body');
+      try {
+        const { submissions } = await getJSON('/api/dashboard/submissions');
+        $('submissions-meta').textContent = `${submissions.length} rows`;
+        if (!submissions.length) {
+          body.innerHTML = '<tr><td colspan="6" class="empty">No submissions yet.</td></tr>';
+          return;
+        }
+        body.innerHTML = submissions.map(s => `
+          <tr>
+            <td>${escapeHtml(s.name)}</td>
+            <td class="email">${escapeHtml(s.email)}</td>
+            <td class="msg">${escapeHtml(truncate(s.message, 120))}</td>
+            <td>${s.replied ? '<span class="pill gold">replied</span>' : '<span class="pill">—</span>'}</td>
+            <td>${s.newsletter_opt_in ? '<span class="pill live">opt-in</span>' : '<span class="pill">—</span>'}</td>
+            <td class="when">${fmtDate(s.created_at)}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="6" class="empty">${escapeHtml(err.message)}</td></tr>`;
+      }
+    },
+    subscribers: async () => {
+      const body = $('subscribers-body');
+      try {
+        const { subscribers } = await getJSON('/api/dashboard/subscribers');
+        $('subscribers-meta').textContent = `${subscribers.length} active`;
+        if (!subscribers.length) {
+          body.innerHTML = '<tr><td colspan="4" class="empty">No subscribers yet.</td></tr>';
+          return;
+        }
+        body.innerHTML = subscribers.map(s => `
+          <tr data-id="${escapeHtml(s.id)}">
+            <td>${escapeHtml(s.name)}</td>
+            <td class="email">${escapeHtml(s.email)}</td>
+            <td class="when">${fmtDate(s.created_at)}</td>
+            <td><button class="row-btn js-unsub" data-id="${escapeHtml(s.id)}">Unsubscribe</button></td>
+          </tr>
+        `).join('');
+        body.querySelectorAll('.js-unsub').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            btn.disabled = true;
+            btn.textContent = 'Removing…';
+            try {
+              const res = await fetch('/api/dashboard/subscribers/unsubscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ id: btn.dataset.id }),
+              });
+              const data = await res.json().catch(() => ({}));
+              if (!res.ok || !data.ok) throw new Error(data.error || 'Failed');
+              const row = btn.closest('tr');
+              row.style.opacity = '0.3';
+              setTimeout(() => row.remove(), 300);
+              loaded.delete('overview');
+            } catch (err) {
+              btn.disabled = false;
+              btn.textContent = 'Retry';
+              alert(err.message);
+            }
+          });
+        });
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="4" class="empty">${escapeHtml(err.message)}</td></tr>`;
+      }
+    },
+    'email-log': async () => {
+      const body = $('email-log-body');
+      try {
+        const { events } = await getJSON('/api/dashboard/email-log');
+        $('email-log-meta').textContent = `${events.length} events`;
+        if (!events.length) {
+          body.innerHTML = '<tr><td colspan="4" class="empty">No email events recorded.</td></tr>';
+          return;
+        }
+        body.innerHTML = events.map(e => `
+          <tr>
+            <td class="when">${fmtDate(e.timestamp)}</td>
+            <td>${e.type === 'confirmation'
+              ? '<span class="pill gold">confirmation</span>'
+              : `<span class="pill">${escapeHtml(e.type)}</span>`}</td>
+            <td>${escapeHtml(e.name)} <span class="email">· ${escapeHtml(e.email)}</span></td>
+            <td class="email">${escapeHtml(e.submission_id)}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="4" class="empty">${escapeHtml(err.message)}</td></tr>`;
+      }
+    },
+  };
+})();
+</script>
+
+</body>
+</html>
