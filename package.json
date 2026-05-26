@@ -1,0 +1,25 @@
+{
+  "name": "kie-asset-generator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CLI to generate images and videos via kie.ai and save them locally for use in project websites.",
+  "bin": {
+    "kie": "./scripts/generate.js"
+  },
+  "scripts": {
+    "image": "node scripts/generate.js image",
+    "video": "node scripts/generate.js video",
+    "start": "vercel dev"
+  },
+  "devDependencies": {
+    "playwright": "^1.60.0",
+    "vercel": "^54.4.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
+    "dotenv": "^17.4.2",
+    "resend": "^6.12.4",
+    "svix": "^1.94.0"
+  }
+}

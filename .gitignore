@@ -9,8 +9,6 @@ debug-overflow.mjs
 
 # Node
 node_modules/
-package.json
-package-lock.json
 
 # Secrets
 .env
@@ -29,8 +27,14 @@ SCROLL-ANIMATION-BEST-PRACTICES.md
 # Test screenshots
 verify-shots/
 
+# Local dev verification artifacts (logs, seed JSON, sample webhook payloads)
+.verify/
+
 # Unused frame folder
 volta-vision/
 
 # Rejected image
 generated/eiffel-painted.png
+
+.vercel
+.env*
