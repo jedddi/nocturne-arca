@@ -1,10 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/collection/aether", "destination": "/product.html" },
-    { "source": "/collection/volta", "destination": "/volta.html" }
-  ],
   "redirects": [
     { "source": "/product", "destination": "/collection/aether", "permanent": true },
     { "source": "/volta", "destination": "/collection/volta", "permanent": true }
