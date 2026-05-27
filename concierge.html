@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concierge — Maison Nocturne</title>
+<meta name="description" content="Client services for Maison Nocturne — account, service, repair, and atelier visits, arranged personally for the life of each instrument." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg:#000000; --bg-elev:#0A0A0A; --text:#F5F5F7; --muted:#86868B; --dim:#4A4A4E;
+    --line:#181818; --gold:#C9A961; --gold-dim:#6B5A35;
+    --serif:'Instrument Serif','Times New Roman',serif; --sans:'Geist',system-ui,-apple-system,sans-serif;
+    --mono:'Geist Mono',ui-monospace,monospace; --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); font-weight:400; font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden; }
+  a { color: inherit; text-decoration: none; }
+  body::before { content:''; position:fixed; inset:0; pointer-events:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>"); opacity:0.035; mix-blend-mode:overlay; z-index:999; }
+
+  .nav { position:fixed; top:0; left:0; right:0; z-index:50; padding:28px 48px; display:flex; align-items:center; justify-content:space-between; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); background:linear-gradient(to bottom,rgba(0,0,0,0.6),rgba(0,0,0,0)); transition:padding .6s var(--ease); }
+  .nav.scrolled { padding:18px 48px; background:rgba(0,0,0,0.7); }
+  .brand { font-family:var(--sans); font-weight:500; letter-spacing:0.32em; font-size:14px; text-transform:uppercase; }
+  .brand .dot { display:inline-block; width:5px; height:5px; background:var(--gold); border-radius:50%; margin-right:12px; transform:translateY(-2px); }
+  .nav-links { display:flex; gap:40px; font-family:var(--mono); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+  .nav-links a { transition:color .3s var(--ease); }
+  .nav-links a:hover, .nav-links a.current { color:var(--text); }
+  @media (max-width:720px){ .nav{padding:20px 24px;} .nav-links{display:none;} }
+
+  .page-hero { padding:200px 48px 80px; max-width:1100px; margin:0 auto; }
+  .page-hero .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:0.3em; text-transform:uppercase; color:var(--muted); display:inline-flex; align-items:center; gap:14px; margin:0 0 30px; }
+  .page-hero .eyebrow::before { content:''; width:32px; height:1px; background:var(--dim); }
+  .page-hero h1 { font-family:var(--serif); font-weight:400; font-size:clamp(2.8rem,8vw,6.5rem); line-height:0.98; letter-spacing:-0.02em; margin:0 0 30px; }
+  .page-hero h1 em { font-style:italic; color:var(--gold); }
+  .page-hero .lede { max-width:640px; font-size:18px; line-height:1.65; color:var(--muted); font-weight:300; margin:0 0 40px; }
+
+  /* Quick index of services */
+  .svc-index { display:flex; flex-wrap:wrap; gap:10px; }
+  .svc-index a { font-family:var(--mono); font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line); padding:10px 16px; transition:color .3s var(--ease), border-color .3s var(--ease); }
+  .svc-index a:hover { color:var(--gold); border-color:var(--gold-dim); }
+
+  .prose { max-width:1100px; margin:0 auto; padding:0 48px 40px; }
+  .block { padding:84px 0; border-top:1px solid var(--line); display:grid; grid-template-columns:1fr 2fr; gap:56px; scroll-margin-top:120px; }
+  .block .lbl { font-family:var(--mono); font-size:11px; letter-spacing:0.24em; text-transform:uppercase; color:var(--muted); padding-top:6px; }
+  .block h2 { font-family:var(--serif); font-weight:400; font-size:clamp(1.8rem,3.6vw,2.9rem); margin:0 0 24px; letter-spacing:-0.01em; }
+  .block h2 em { font-style:italic; color:var(--gold); }
+  .block p { font-size:16px; line-height:1.75; color:var(--muted); margin:0 0 18px; max-width:62ch; }
+  .block strong { color:var(--text); font-weight:400; }
+
+  .svc-cta { display:inline-flex; align-items:center; gap:12px; margin-top:8px; font-family:var(--mono); font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--text); padding-bottom:8px; border-bottom:1px solid var(--line); transition:gap .5s var(--ease), color .5s var(--ease), border-color .5s var(--ease); }
+  .svc-cta:hover { gap:20px; color:var(--gold); border-bottom-color:var(--gold); }
+
+  @media (max-width:760px){ .page-hero{padding:150px 28px 56px;} .prose{padding:0 28px 24px;} .block{grid-template-columns:1fr; gap:22px; padding:56px 0;} }
+
+  footer { padding:80px 48px 48px; border-top:1px solid var(--line); margin-top:60px; }
+  .foot-grid { max-width:1400px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; padding-bottom:64px; }
+  @media (max-width:760px){ .foot-grid{grid-template-columns:1fr 1fr;} }
+  .foot-grid h4 { font-family:var(--mono); font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--muted); margin:0 0 18px; font-weight:400; }
+  .foot-grid ul { list-style:none; padding:0; margin:0; }
+  .foot-grid li { margin-bottom:10px; font-size:14px; color:var(--text); }
+  .foot-grid li a { transition:color .3s var(--ease); }
+  .foot-grid li a:hover { color:var(--gold); }
+  .foot-tagline { font-family:var(--serif); font-size:1.5rem; line-height:1.3; max-width:340px; margin:0; }
+  .foot-tagline em { font-style:italic; color:var(--gold); }
+  .socials { display:flex; gap:18px; margin-top:26px; }
+  .socials a { color:var(--muted); transition:color .3s var(--ease), transform .3s var(--ease); }
+  .socials a:hover { color:var(--gold); transform:translateY(-2px); }
+  .foot-meta { max-width:1400px; margin:0 auto; padding-top:32px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); }
+  @media (max-width:600px){ .foot-meta{flex-direction:column; gap:16px;} }
+
+  .reveal { opacity:0; transform:translateY(40px); transition:opacity 1.1s var(--ease), transform 1.1s var(--ease); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="brand"><span class="dot"></span>NOCTURNE</a>
+  <div class="nav-links">
+    <a href="index.html#collection">Collection</a>
+    <a href="philosophy.html">Philosophy</a>
+    <a href="journal.html">Journal</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <p class="eyebrow">Client · Concierge</p>
+  <h1>One <em>quiet</em> point of contact.</h1>
+  <p class="lede">
+    Every client is looked after by a single member of the Maison — for acquisitions, for
+    service, and for everything an instrument needs across its life. No queue, no ticket
+    number, no script.
+  </p>
+  <nav class="svc-index" aria-label="Services">
+    <a href="#account">Account</a>
+    <a href="#service">Service</a>
+    <a href="#repair">Repair</a>
+    <a href="#atelier-visits">Atelier visits</a>
+  </nav>
+</header>
+
+<main class="prose">
+
+  <section class="block reveal" id="account">
+    <div class="lbl">01 — Account</div>
+    <div>
+      <h2>Your <em>register</em> with the house.</h2>
+      <p>
+        Your account is the record of what you own: edition numbers, certificates, service
+        history, and the standing of any reservation. It is held quietly by the Maison — there
+        is no password to forget and no public sign-up. An account is opened for you the moment
+        your first reservation is confirmed.
+      </p>
+      <p>
+        Need a certificate reissued, a delivery address changed, or a summary of what you hold?
+        Write to the Maison and your concierge will see to it — usually within forty-eight hours.
+      </p>
+      <a class="svc-cta" href="index.html#contact">Contact the concierge <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="block reveal" id="service">
+    <div class="lbl">02 — Service</div>
+    <div>
+      <h2>Maintained for <em>decades.</em></h2>
+      <p>
+        A Nocturne instrument is built to be kept. Routine service — regulation, refinishing,
+        seals, and software where relevant — is carried out at the bench in Le Locle by the
+        same makers who finished the piece.
+      </p>
+      <p><strong>The first service is complimentary</strong> within the first two years of ownership.</p>
+      <a class="svc-cta" href="index.html#contact">Arrange a service <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="block reveal" id="repair">
+    <div class="lbl">03 — Repair</div>
+    <div>
+      <h2>Restored, never <em>discarded.</em></h2>
+      <p>
+        Accidents happen. We repair rather than replace, and we keep the parts to do so for
+        the life of every edition. A repaired instrument returns with its original number and
+        a note in its service history.
+      </p>
+      <a class="svc-cta" href="index.html#contact">Request a repair <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="block reveal" id="atelier-visits">
+    <div class="lbl">04 — Atelier visits</div>
+    <div>
+      <h2>A morning in <em>Le Locle.</em></h2>
+      <p>
+        Clients are welcome at the atelier by appointment. Visits are unhurried — a look at the
+        bench, a fitting if you are reserving, and a coffee. The
+        <a href="philosophy.html#atelier" style="color:var(--gold); border-bottom:1px solid var(--gold-dim);">atelier</a>
+        is small, so we host only a few each week.
+      </p>
+      <a class="svc-cta" href="index.html#contact">Plan a visit <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <h4>Maison</h4>
+      <p class="foot-tagline">A small house, <em>quietly</em> assembling the next century of objects.</p>
+      <div class="socials">
+        <a href="https://instagram.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        <a href="https://vimeo.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on Vimeo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8 c 3 -3, 6 -1, 7 3 c 1 4, 2 7, 4 5 c 2 -2, 4 -7, 4 -9 c 0 -2, -2 -3, -5 -1"/></svg></a>
+        <a href="https://x.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on X"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 3h3l-7.5 8.6L22 21h-6.6l-5.2-6.3L4 21H1l8-9.1L1.5 3H8l4.7 5.8z"/></svg></a>
+        <a href="https://youtube.com/@maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on YouTube"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M10 10 L15 12 L10 14 Z" fill="currentColor"/></svg></a>
+      </div>
+    </div>
+    <div>
+      <h4>House</h4>
+      <ul>
+        <li><a href="philosophy.html#atelier">Atelier</a></li>
+        <li><a href="provenance.html">Provenance</a></li>
+        <li><a href="journal.html">Journal</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Client</h4>
+      <ul>
+        <li><a href="concierge.html">Concierge</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="legal.html#privacy">Privacy</a></li>
+        <li><a href="legal.html#terms">Terms</a></li>
+        <li><a href="legal.html#cookies">Cookie policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-meta">
+    <span>© MMXXVI · Maison Nocturne · Le Locle</span>
+    <span>Designed in shadow.</span>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 24); }, { passive: true });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); io.unobserve(entry.target); } });
+  }, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

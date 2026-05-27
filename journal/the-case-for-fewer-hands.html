@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The case for fewer hands — Maison Nocturne Journal</title>
+<meta name="description" content="Why our bench will never scale, and why that is the point — a short essay on the relationship between the number of hands that touch an object and the compromises it carries." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg:#000000; --bg-elev:#0A0A0A; --text:#F5F5F7; --read:#C7C7CC; --muted:#86868B; --dim:#4A4A4E;
+    --line:#181818; --gold:#C9A961; --gold-dim:#6B5A35;
+    --serif:'Instrument Serif','Times New Roman',serif; --sans:'Geist',system-ui,-apple-system,sans-serif;
+    --mono:'Geist Mono',ui-monospace,monospace; --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); font-weight:400; font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden; }
+  a { color: inherit; text-decoration: none; }
+  body::before { content:''; position:fixed; inset:0; pointer-events:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>"); opacity:0.035; mix-blend-mode:overlay; z-index:999; }
+
+  .nav { position:fixed; top:0; left:0; right:0; z-index:50; padding:28px 48px; display:flex; align-items:center; justify-content:space-between; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); background:linear-gradient(to bottom,rgba(0,0,0,0.6),rgba(0,0,0,0)); transition:padding .6s var(--ease); }
+  .nav.scrolled { padding:18px 48px; background:rgba(0,0,0,0.7); }
+  .brand { font-family:var(--sans); font-weight:500; letter-spacing:0.32em; font-size:14px; text-transform:uppercase; }
+  .brand .dot { display:inline-block; width:5px; height:5px; background:var(--gold); border-radius:50%; margin-right:12px; transform:translateY(-2px); }
+  .nav-links { display:flex; gap:40px; font-family:var(--mono); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+  .nav-links a { transition:color .3s var(--ease); }
+  .nav-links a:hover, .nav-links a.current { color:var(--text); }
+  @media (max-width:720px){ .nav{padding:20px 24px;} .nav-links{display:none;} }
+
+  /* ---------- Article ---------- */
+  .article-hero { max-width:760px; margin:0 auto; padding:190px 28px 0; }
+  .article-hero .kicker { font-family:var(--mono); font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:var(--muted); display:inline-flex; align-items:center; gap:14px; margin:0 0 28px; }
+  .article-hero .kicker::before { content:''; width:30px; height:1px; background:var(--dim); }
+  .article-hero h1 { font-family:var(--serif); font-weight:400; font-size:clamp(2.6rem,6.5vw,4.6rem); line-height:1.02; letter-spacing:-0.02em; margin:0 0 26px; }
+  .article-hero h1 em { font-style:italic; color:var(--gold); }
+  .article-hero .dek { font-size:19px; line-height:1.6; color:var(--muted); font-weight:300; margin:0 0 34px; max-width:36ch; }
+  .article-hero .byline { font-family:var(--mono); font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--dim); border-top:1px solid var(--line); padding-top:24px; }
+
+  .article { max-width:680px; margin:0 auto; padding:48px 28px 20px; }
+  .article p { font-size:18px; line-height:1.85; color:var(--read); margin:0 0 28px; }
+  .article p.lead::first-letter { font-family:var(--serif); font-size:3.4em; line-height:0.8; float:left; padding:6px 14px 0 0; color:var(--gold); }
+  .article h2 { font-family:var(--serif); font-weight:400; font-size:clamp(1.6rem,3.4vw,2.3rem); letter-spacing:-0.01em; margin:52px 0 22px; }
+  .article h2 em { font-style:italic; color:var(--gold); }
+  .article strong { color:var(--text); font-weight:500; }
+  .pullquote { margin:56px 0; padding:8px 0 8px 32px; border-left:1px solid var(--gold-dim); font-family:var(--serif); font-style:italic; font-size:clamp(1.7rem,3.6vw,2.4rem); line-height:1.3; color:var(--text); }
+  .pullquote em { color:var(--gold); font-style:italic; }
+  .article-foot { max-width:680px; margin:0 auto; padding:40px 28px 0; border-top:1px solid var(--line); }
+  .return { display:inline-flex; align-items:center; gap:12px; font-family:var(--mono); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--text); padding-bottom:6px; border-bottom:1px solid var(--line); transition:gap .5s var(--ease), color .5s var(--ease), border-color .5s var(--ease); }
+  .return:hover { gap:18px; color:var(--gold); border-bottom-color:var(--gold); }
+  @media (max-width:720px){ .article-hero{ padding:150px 24px 0; } }
+
+  footer { padding:90px 48px 48px; border-top:1px solid var(--line); margin-top:80px; }
+  .foot-grid { max-width:1400px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; padding-bottom:64px; }
+  @media (max-width:760px){ .foot-grid{grid-template-columns:1fr 1fr;} }
+  .foot-grid h4 { font-family:var(--mono); font-size:10px; letter-spacing:0.24em; text-transform:uppercase; color:var(--muted); margin:0 0 18px; font-weight:400; }
+  .foot-grid ul { list-style:none; padding:0; margin:0; }
+  .foot-grid li { margin-bottom:10px; font-size:14px; color:var(--text); }
+  .foot-grid li a { transition:color .3s var(--ease); }
+  .foot-grid li a:hover { color:var(--gold); }
+  .foot-tagline { font-family:var(--serif); font-size:1.5rem; line-height:1.3; max-width:340px; margin:0; }
+  .foot-tagline em { font-style:italic; color:var(--gold); }
+  .socials { display:flex; gap:18px; margin-top:26px; }
+  .socials a { color:var(--muted); transition:color .3s var(--ease), transform .3s var(--ease); }
+  .socials a:hover { color:var(--gold); transform:translateY(-2px); }
+  .foot-meta { max-width:1400px; margin:0 auto; padding-top:32px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); }
+  @media (max-width:600px){ .foot-meta{flex-direction:column; gap:16px;} }
+
+  .reveal { opacity:0; transform:translateY(30px); transition:opacity 1s var(--ease), transform 1s var(--ease); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="/" class="brand"><span class="dot"></span>NOCTURNE</a>
+  <div class="nav-links">
+    <a href="/#collection">Collection</a>
+    <a href="/philosophy">Philosophy</a>
+    <a href="/journal" class="current">Journal</a>
+    <a href="/#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="article-hero">
+  <p class="kicker">Journal · Nº 04 · Method</p>
+  <h1>The case for <em>fewer hands.</em></h1>
+  <p class="dek">
+    Why our bench will never scale — and why that is precisely the point.
+  </p>
+  <p class="byline">18 May MMXXVI · 6 minutes · Maison Nocturne</p>
+</header>
+
+<article class="article">
+  <p class="lead reveal">
+    There is a number, rarely written down, that decides the character of almost every object you
+    own: how many hands touched it before it reached yours. A phone passes through hundreds. A
+    luxury watch, fewer — but more than you would guess. We have spent a great deal of effort
+    keeping that number small, and we are often asked why. The honest answer is that each
+    additional hand is also an additional opinion, an additional deadline, and an additional
+    chance to settle.
+  </p>
+
+  <p class="reveal">
+    Scale is usually treated as a virtue. More units, more makers, more reach. But scale has a
+    cost that does not appear on a balance sheet: it converts judgement into procedure. When one
+    person finishes a case, they decide when it is done. When forty people finish cases, "done"
+    has to be written into a specification so that all forty agree — and the specification, by
+    necessity, describes the <strong>acceptable</strong>, not the <strong>uncompromised</strong>.
+  </p>
+
+  <p class="reveal">
+    Our bench holds a handful of people. A watchmaker. An optical technician. A finisher. Each
+    instrument passes through the same hands every time, and those hands remember the last one.
+    That memory is not sentimentality — it is the mechanism by which a piece gets better instead
+    of merely consistent.
+  </p>
+
+  <div class="pullquote reveal">
+    An instrument leaves the bench when its maker is <em>unwilling to improve it further</em> — not
+    a day sooner, and never to meet a number.
+  </div>
+
+  <h2 class="reveal">The arithmetic of <em>compromise</em></h2>
+
+  <p class="reveal">
+    Consider a finish. A single maker brushing a titanium case can chase a flaw for an extra
+    twenty minutes because no one is waiting on the next operation. Multiply that maker by
+    forty and the twenty minutes becomes a bottleneck; the flaw becomes "within tolerance"; the
+    tolerance becomes the product. Nothing dramatic happens. The watch is still good. It is
+    simply no longer the best that hands could have made — and the difference, while small, is
+    exactly the difference we exist to protect.
+  </p>
+
+  <p class="reveal">
+    This is why our editions are numbered to the hundreds rather than the thousands. The limit is
+    not a marketing device; it is a consequence. A small bench can only finish so many pieces
+    before it would have to grow — and growing is the one thing we have decided not to do. When an
+    edition closes, it closes because the hands that made it have moved on to the next idea.
+  </p>
+
+  <p class="reveal">
+    There is a quieter benefit, too. The same people who finish a piece are the ones who service
+    it years later. A repair is not handed to a stranger reading a manual; it returns to the bench
+    that knew it. An object made by few hands can also be <strong>kept</strong> by few hands — and
+    a thing that can be kept does not need to be replaced.
+  </p>
+
+  <p class="reveal">
+    So we will not scale, and we will say so plainly. Fewer hands is not a limitation we tolerate.
+    It is the instrument's first specification, and the last one we would ever remove.
+  </p>
+</article>
+
+<div class="article-foot reveal">
+  <a href="/journal" class="return"><span aria-hidden="true">←</span> Return to the Journal</a>
+</div>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <h4>Maison</h4>
+      <p class="foot-tagline">A small house, <em>quietly</em> assembling the next century of objects.</p>
+      <div class="socials">
+        <a href="https://instagram.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        <a href="https://vimeo.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on Vimeo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8 c 3 -3, 6 -1, 7 3 c 1 4, 2 7, 4 5 c 2 -2, 4 -7, 4 -9 c 0 -2, -2 -3, -5 -1"/></svg></a>
+        <a href="https://x.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on X"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 3h3l-7.5 8.6L22 21h-6.6l-5.2-6.3L4 21H1l8-9.1L1.5 3H8l4.7 5.8z"/></svg></a>
+        <a href="https://youtube.com/@maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on YouTube"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M10 10 L15 12 L10 14 Z" fill="currentColor"/></svg></a>
+      </div>
+    </div>
+    <div>
+      <h4>House</h4>
+      <ul>
+        <li><a href="/philosophy#atelier">Atelier</a></li>
+        <li><a href="/provenance">Provenance</a></li>
+        <li><a href="/journal">Journal</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Client</h4>
+      <ul>
+        <li><a href="/concierge">Concierge</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="/legal#privacy">Privacy</a></li>
+        <li><a href="/legal#terms">Terms</a></li>
+        <li><a href="/legal#cookies">Cookie policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-meta">
+    <span>© MMXXVI · Maison Nocturne · Le Locle</span>
+    <span>Designed in shadow.</span>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 24); }, { passive: true });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); io.unobserve(entry.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

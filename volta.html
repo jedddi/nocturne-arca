@@ -485,6 +485,69 @@
   .reveal[data-delay="2"] { transition-delay: .16s; }
   .reveal[data-delay="3"] { transition-delay: .24s; }
   .reveal[data-delay="4"] { transition-delay: .32s; }
+
+  /* ---------- Materials / Dimensions / Provenance ---------- */
+  .spec { max-width: 1180px; margin: 0 auto; padding: 60px 48px 20px; }
+  .spec-row { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; border-top: 1px solid var(--line); padding-top: 56px; }
+  .spec-col .label-line { margin-bottom: 0; }
+  .spec-col h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.4rem); margin: 14px 0 18px; letter-spacing: -.01em; }
+  .spec-col h3 em { font-style: italic; color: var(--gold); }
+  .spec-copy { color: var(--muted); font-size: 15px; line-height: 1.75; margin: 0; max-width: 46ch; }
+  .spec-list { list-style: none; margin: 16px 0 0; padding: 0; }
+  .spec-list li { display: flex; justify-content: space-between; gap: 24px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .spec-list li span:first-child { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .spec-list li span:last-child { color: var(--text); }
+  .spec-prov { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 32px; }
+  .spec-prov p { color: var(--muted); font-size: 15px; line-height: 1.7; margin: 14px 0 0; max-width: 60ch; }
+  .spec-prov a { color: var(--gold); border-bottom: 1px solid var(--gold-dim, #6B5A35); transition: color .3s var(--ease); }
+  .spec-prov a:hover { color: var(--text); }
+  @media (max-width: 760px) { .spec { padding: 24px 28px; } .spec-row { grid-template-columns: 1fr; gap: 36px; padding-top: 40px; } }
+
+  /* ---------- Reservation modal ---------- */
+  button.cta-button { border: 0; cursor: pointer; }
+  .reserve-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: rgba(0,0,0,0.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility .5s var(--ease);
+  }
+  .reserve-overlay.open { opacity: 1; visibility: visible; }
+  .reserve-modal {
+    width: 100%; max-width: 480px; background: #060606; border: 1px solid var(--line);
+    padding: 44px 40px 40px; position: relative;
+    transform: translateY(20px); transition: transform .6s var(--ease);
+  }
+  .reserve-overlay.open .reserve-modal { transform: translateY(0); }
+  .reserve-modal .r-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: var(--gold); margin: 0 0 14px; }
+  .reserve-modal h3 { font-family: var(--serif); font-weight: 400; font-size: 2rem; margin: 0 0 6px; letter-spacing: -.01em; }
+  .reserve-modal h3 em { font-style: italic; color: var(--gold); }
+  .reserve-modal .r-sub { color: var(--muted); font-size: 14px; margin: 0 0 30px; }
+  .reserve-modal .r-field { margin-bottom: 22px; }
+  .reserve-modal label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .reserve-modal input, .reserve-modal textarea {
+    width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--line);
+    color: var(--text); font-family: var(--sans); font-weight: 300; font-size: 1rem;
+    padding: 8px 0 10px; outline: none; transition: border-color .4s var(--ease); resize: vertical;
+  }
+  .reserve-modal textarea { min-height: 70px; }
+  .reserve-modal input:focus, .reserve-modal textarea:focus { border-bottom-color: var(--gold); }
+  .reserve-modal .r-error { font-family: var(--mono); font-size: 12px; color: #d97a7a; margin: 4px 0 18px; }
+  .reserve-modal .r-submit {
+    display: inline-flex; align-items: center; gap: 12px; margin-top: 10px;
+    background: var(--gold); color: #000; border: 0; border-radius: 999px;
+    padding: 16px 34px; font-family: var(--mono); font-size: 11px; letter-spacing: .22em;
+    text-transform: uppercase; font-weight: 500; cursor: pointer; transition: all .5s var(--ease);
+  }
+  .reserve-modal .r-submit:hover:not(:disabled) { background: var(--text); transform: translateY(-2px); }
+  .reserve-modal .r-submit:disabled { opacity: .45; cursor: wait; }
+  .reserve-modal .r-foot { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin: 22px 0 0; line-height: 1.6; }
+  .reserve-close {
+    position: absolute; top: 18px; right: 18px; width: 34px; height: 34px;
+    border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--muted);
+    cursor: pointer; font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center;
+    transition: color .3s var(--ease), border-color .3s var(--ease);
+  }
+  .reserve-close:hover { color: var(--gold); border-color: var(--gold-dim); }
 </style>
 </head>
 <body>
@@ -499,13 +562,12 @@
 
 <nav class="nav" id="nav">
   <div style="display:flex;align-items:center;">
-    <a href="index.html" class="brand"><span class="back">←</span><span class="dot"></span>NOCTURNE</a>
+    <a href="/" class="brand"><span class="back">←</span><span class="dot"></span>NOCTURNE</a>
   </div>
   <div class="nav-links">
     <a href="#act-anatomy">Anatomy</a>
     <a href="#act-vision">Vision</a>
     <a href="#cta">Acquire</a>
-    <a href="#cta" class="nav-cta">Reserve</a>
   </div>
 </nav>
 
@@ -519,7 +581,6 @@
       it shows you sooner. The architecture of the world, drawn before it arrives.
     </p>
     <div class="hero-cta-row">
-      <a href="#cta" class="btn-primary">Reserve</a>
       <a href="#act-anatomy" class="btn-ghost">See the anatomy ↓</a>
     </div>
   </div>
@@ -636,6 +697,38 @@
   </div>
 </section>
 
+<!-- ============ MATERIALS · DIMENSIONS · PROVENANCE ============ -->
+<section class="spec" id="spec">
+  <div class="spec-row">
+    <div class="spec-col reveal">
+      <p class="label-line">Materials</p>
+      <h3>Structure before <em>surface.</em></h3>
+      <p class="spec-copy">
+        A cold-forged titanium frame, drawn as a single continuous line. Lenses ground in-house
+        with an edge-lit waveguide. Hinges regulated by hand and sealed in Le Locle. Made to be
+        worn, not noticed.
+      </p>
+    </div>
+    <div class="spec-col reveal" data-delay="1">
+      <p class="label-line">Dimensions</p>
+      <ul class="spec-list">
+        <li><span>Frame</span><span>138 mm temple</span></li>
+        <li><span>Lens</span><span>48 mm · mineral glass</span></li>
+        <li><span>Weight</span><span>41 g</span></li>
+        <li><span>Optics</span><span>Monocular waveguide</span></li>
+        <li><span>Reserve</span><span>Full day</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="spec-prov reveal" data-delay="2">
+    <p class="label-line">Provenance</p>
+    <p>
+      Each Volta is numbered to 300, fitted in person at the atelier, and ships with a
+      certificate. <a href="/provenance">Read its provenance →</a>
+    </p>
+  </div>
+</section>
+
 <!-- ============ CTA ============ -->
 <section class="cta" id="cta">
   <p class="label-line reveal">First Edition · Numbered to 300</p>
@@ -644,10 +737,10 @@
     Volta ships in spring. Each pair is numbered, hand-finished in Le Locle,
     and fitted in person at the atelier. The maison reserves three hundred.
   </p>
-  <a href="#" class="cta-button reveal" data-delay="3">
+  <button type="button" class="cta-button reveal" data-delay="3" id="reserveOpen" data-product="Volta" data-price="€ 5,800">
     Reserve yours
     <span class="price">€ 5,800</span>
-  </a>
+  </button>
   <p class="cta-foot reveal" data-delay="4">No charge until shipment · Limited 300</p>
 </section>
 
@@ -657,10 +750,10 @@
       <h4>Maison</h4>
       <p class="foot-tagline">A small house, <em>quietly</em> assembling the next century of objects.</p>
       <div class="socials">
-        <a href="#" aria-label="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
-        <a href="#" aria-label="Vimeo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8 c 3 -3, 6 -1, 7 3 c 1 4, 2 7, 4 5 c 2 -2, 4 -7, 4 -9 c 0 -2, -2 -3, -5 -1"/></svg></a>
-        <a href="#" aria-label="X"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 3h3l-7.5 8.6L22 21h-6.6l-5.2-6.3L4 21H1l8-9.1L1.5 3H8l4.7 5.8z"/></svg></a>
-        <a href="#" aria-label="YouTube"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M10 10 L15 12 L10 14 Z" fill="currentColor"/></svg></a>
+        <a href="https://instagram.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        <a href="https://vimeo.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on Vimeo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8 c 3 -3, 6 -1, 7 3 c 1 4, 2 7, 4 5 c 2 -2, 4 -7, 4 -9 c 0 -2, -2 -3, -5 -1"/></svg></a>
+        <a href="https://x.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on X"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 3h3l-7.5 8.6L22 21h-6.6l-5.2-6.3L4 21H1l8-9.1L1.5 3H8l4.7 5.8z"/></svg></a>
+        <a href="https://youtube.com/@maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on YouTube"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M10 10 L15 12 L10 14 Z" fill="currentColor"/></svg></a>
       </div>
     </div>
     <div>
@@ -668,25 +761,22 @@
       <ul>
         <li><a href="#act-anatomy">Anatomy</a></li>
         <li><a href="#act-vision">Vision</a></li>
-        <li><a href="#">Provenance</a></li>
+        <li><a href="/provenance">Provenance</a></li>
       </ul>
     </div>
     <div>
       <h4>Client</h4>
       <ul>
-        <li><a href="#">Concierge</a></li>
-        <li><a href="#">Atelier visits</a></li>
-        <li><a href="#">Service</a></li>
-        <li><a href="#">Repair</a></li>
+        <li><a href="/concierge">Concierge</a></li>
       </ul>
     </div>
     <div>
       <h4>House</h4>
       <ul>
-        <li><a href="#">Privacy</a></li>
-        <li><a href="#">Terms</a></li>
-        <li><a href="#">Cookie policy</a></li>
-        <li><a href="#">Press</a></li>
+        <li><a href="/legal#privacy">Privacy</a></li>
+        <li><a href="/legal#terms">Terms</a></li>
+        <li><a href="/legal#cookies">Cookie policy</a></li>
+        <li><a href="/journal#press">Press</a></li>
       </ul>
     </div>
   </div>
@@ -695,6 +785,35 @@
     <span>Designed in shadow.</span>
   </div>
 </footer>
+
+<!-- ============ RESERVATION MODAL ============ -->
+<div class="reserve-overlay" id="reserveOverlay" role="dialog" aria-modal="true" aria-labelledby="reserveTitle" hidden>
+  <div class="reserve-modal">
+    <button type="button" class="reserve-close" id="reserveClose" aria-label="Close reservation">×</button>
+    <p class="r-eyebrow">Reservation · No charge until shipment</p>
+    <h3 id="reserveTitle">Reserve <em>Volta.</em></h3>
+    <p class="r-sub">First edition · numbered to 300 · € 5,800</p>
+    <form id="reserveForm">
+      <div class="r-field">
+        <label for="r-name">Name</label>
+        <input type="text" id="r-name" name="name" required autocomplete="name" />
+      </div>
+      <div class="r-field">
+        <label for="r-email">Email</label>
+        <input type="email" id="r-email" name="email" required autocomplete="email" />
+      </div>
+      <div class="r-field">
+        <label for="r-note">Note <span style="text-transform:none; letter-spacing:0;">(optional)</span></label>
+        <textarea id="r-note" name="note" rows="2" placeholder="Lens prescription, sizing, an atelier fitting…"></textarea>
+      </div>
+      <div class="r-error" id="reserveError" hidden></div>
+      <button type="submit" class="r-submit">
+        <span>Confirm reservation</span><span aria-hidden="true">→</span>
+      </button>
+      <p class="r-foot">No payment is taken now. A member of the Maison will confirm your edition number.</p>
+    </form>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
@@ -808,7 +927,7 @@
 
   const anatomy = makeCanvasAct({
     canvas: document.getElementById('anatomyCanvas'),
-    folder: 'volta-anatomy/',
+    folder: '/volta-anatomy/',
     frameCount: ANATOMY_COUNT,
     heroAnchor: document.getElementById('heroVisualAnchor'),
     heroZoom: 1.18,
@@ -816,7 +935,7 @@
 
   const vision = makeCanvasAct({
     canvas: document.getElementById('visionCanvas'),
-    folder: 'volta-landmark/',
+    folder: '/volta-landmark/',
     frameCount: LANDMARK_COUNT,
     heroAnchor: null,    // No hero anchor — vision canvas only ever lives in its act
     heroZoom: 1.0,
@@ -1161,6 +1280,63 @@
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   window.addEventListener('load', () => { ScrollTrigger.refresh(); updateAnatomy(); updateVision(); });
+
+  /* ---------- Reservation modal ---------- */
+  (function () {
+    const overlay  = document.getElementById('reserveOverlay');
+    const openBtn  = document.getElementById('reserveOpen');
+    const closeBtn = document.getElementById('reserveClose');
+    const form     = document.getElementById('reserveForm');
+    const errEl    = document.getElementById('reserveError');
+    if (!overlay || !openBtn || !form) return;
+
+    const product = openBtn.dataset.product || 'an instrument';
+    const price   = openBtn.dataset.price || '';
+
+    function openModal() {
+      overlay.hidden = false;
+      requestAnimationFrame(() => overlay.classList.add('open'));
+      lenis.stop();
+      setTimeout(() => { const n = document.getElementById('r-name'); if (n) n.focus(); }, 80);
+    }
+    function closeModal() {
+      overlay.classList.remove('open');
+      lenis.start();
+      setTimeout(() => { overlay.hidden = true; }, 500);
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('.r-submit');
+      btn.disabled = true; errEl.hidden = true; errEl.textContent = '';
+      const note = form.note.value.trim();
+      const payload = {
+        name:  form.name.value.trim(),
+        email: form.email.value.trim(),
+        message: `Reservation — ${product} (${price})` + (note ? `\n\n${note}` : ''),
+      };
+      try {
+        const res = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Reservation failed — please try again.');
+        window.location.href = '/thankyou.html';
+      } catch (err) {
+        errEl.textContent = err.message || 'Network error — please check your connection and try again.';
+        errEl.hidden = false; btn.disabled = false;
+      }
+    });
+  })();
 </script>
 
 </body>

@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/slideover.css" />
 
 <style>
   /* ---------- Tokens ---------- */
@@ -457,17 +458,25 @@
   /* Reveal-on-scroll */
   .reveal { opacity: 0; transform: translateY(40px); transition: opacity 1.1s var(--ease), transform 1.1s var(--ease); }
   .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Footer button that reads as a link (Newsletter slide-over trigger) */
+  .foot-trigger {
+    background: none; border: 0; padding: 0; margin: 0;
+    font: inherit; color: var(--text); cursor: pointer;
+    letter-spacing: inherit; transition: color .3s var(--ease);
+  }
+  .foot-trigger:hover { color: var(--gold); }
 </style>
 </head>
 <body>
 
 <!-- ============ NAV ============ -->
 <nav class="nav" id="nav">
-  <a href="#" class="brand"><span class="dot"></span>NOCTURNE</a>
+  <a href="index.html" class="brand"><span class="dot"></span>NOCTURNE</a>
   <div class="nav-links">
     <a href="#collection">Collection</a>
-    <a href="#philosophy">Philosophy</a>
-    <a href="#journal">Journal</a>
+    <a href="philosophy.html">Philosophy</a>
+    <a href="journal.html">Journal</a>
     <a href="#contact">Contact</a>
   </div>
 </nav>
@@ -496,7 +505,7 @@
   <div class="grid">
 
     <!-- AVAILABLE: the smartwatch — links to product.html -->
-    <a href="product.html" class="product-tile available reveal">
+    <a href="/collection/aether" class="product-tile available reveal">
       <div class="tile-meta">
         <span>Nº 01</span>
         <span class="status live">Available</span>
@@ -525,7 +534,7 @@
     </a>
 
     <!-- AVAILABLE: smartglasses — links to volta.html -->
-    <a href="volta.html" class="product-tile available reveal">
+    <a href="/collection/volta" class="product-tile available reveal">
       <div class="tile-meta">
         <span>Nº 02</span>
         <span class="status live">Available</span>
@@ -590,25 +599,23 @@
     <div>
       <h4>House</h4>
       <ul>
-        <li><a href="#">Atelier</a></li>
-        <li><a href="#">Provenance</a></li>
-        <li><a href="#">Journal</a></li>
+        <li><a href="philosophy.html#atelier">Atelier</a></li>
+        <li><a href="provenance.html">Provenance</a></li>
+        <li><a href="journal.html">Journal</a></li>
       </ul>
     </div>
     <div>
       <h4>Client</h4>
       <ul>
-        <li><a href="#">Account</a></li>
-        <li><a href="#">Service</a></li>
-        <li><a href="#">Concierge</a></li>
+        <li><a href="concierge.html">Concierge</a></li>
       </ul>
     </div>
     <div>
       <h4>Discrete</h4>
       <ul>
-        <li><a href="#">Instagram</a></li>
-        <li><a href="#">Vimeo</a></li>
-        <li><a href="#">Newsletter</a></li>
+        <li><a href="https://instagram.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on Instagram">Instagram</a></li>
+        <li><a href="https://vimeo.com/maisonnocturne" target="_blank" rel="noopener noreferrer" aria-label="Maison Nocturne on Vimeo">Vimeo</a></li>
+        <li><button type="button" class="foot-trigger" data-slideover="newsletter">Newsletter</button></li>
       </ul>
     </div>
   </div>
@@ -671,6 +678,7 @@
     });
   }
 </script>
+<script defer src="/slideover.js"></script>
 
 </body>
 </html>
